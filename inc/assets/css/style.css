@@ -1,0 +1,238 @@
+body {
+	background: #EEEEEE;
+	font-family: Arial, Verdana, Sans-Serif;
+	color: #000;
+	font-size: 0.8em;
+}
+#content {
+	min-width: 960px;
+	width: 75%;
+	margin: 0 auto;
+	background: #fff;
+}
+
+.information {
+	margin-bottom: 10px; 
+}
+#userInformation {
+	width: 620px;
+}
+#requestInformation {
+	width: 800px;
+}
+.requestStatus label {
+	float: none !important;
+}
+.requestStatus {
+	margin-left: 205px;
+	padding-top: 5px;
+}
+.information label {
+	white-space: nowrap; /* IE 9 needs this */
+	color: #888;
+	float: left;
+	font-size: 1em;
+	margin-right: 15px;
+	padding-top: 7px;
+	text-align: right;
+	width: 190px;
+}
+.information input[type=text] {
+	width: 400px;
+}
+#required_notice {
+	font-size: 0.8em;
+	color: #888888;
+	margin-left: 205px;
+}
+
+div.options label {
+	float: none;
+	margin-right: 5px !important;
+}
+
+div.datepicker {
+	font-size: 0.9em;
+}
+
+div.options.more, #more_items {
+	margin-left: 205px; 
+}
+
+select + select {
+	margin-left: 5px;
+}
+
+
+#submit, #update, #search, #lookup {
+	margin-left: 205px;
+	margin-top: 10px;
+}
+input[type=submit] {
+	font-weight: bold;
+	border: 1px solid #999999;
+} 
+input[type=submit]:hover, input[type=submit]:active {
+	color: #922338;
+	border-color: #922338;
+}
+
+a.manageRequest {
+	margin: 8px;
+	padding-right: 20px;
+	background-position: center right;
+	background-repeat: no-repeat;
+	display: block;
+}
+
+
+select, input, textarea {
+	font-family: Arial;
+	font-size: 1em;
+	padding-top: 4px;
+	padding: 5px;
+	border: 1px solid #BBBBBB;
+	margin: 5px 0;
+}
+label {
+	margin: 5px 0;
+}
+
+select {
+	padding: 5px;
+}
+
+div.request-status {
+	text-align: left;
+	margin-left: 205px;
+	width: 400px;
+}
+
+div.request-status div {
+	width: 400px;
+	margin: 10px 0;
+}
+div.request-status div label {
+	color: #000;
+	padding-top: 2px;
+	float: none;
+}
+div.request-status div input[type=checkbox] {
+	padding-top: 7px;
+	margin-right: 10px;
+}
+
+input:active, input:focus, textarea:focus {
+	border: 1px solid #922338;
+}
+/* FUCK IE */
+
+input[type=checkbox] {
+	border: none;
+}
+[readonly], [readonly]:active, [readonly]:focus {
+	background: #F8F8F6 !important;
+	border: 1px solid #bbb !important;
+}
+
+#header {
+	height: 75px;
+	overflow: hidden;
+}
+
+
+.error, .alert, .notice, .success, .info { border:1px solid #ddd; padding: 5px }
+.error, .alert {background:#fbe3e4 !important;color:#8a1f11 !important;border-color:#fbc2c4 !important;}
+.notice {background:#fff6bf;color:#514721;border-color:#ffd324;}
+.success {background:#e6efc2;color:#264409;border-color:#c6d880;}
+.info {background:#d5edf8;color:#205791;border-color:#92cae4;}
+.error a, .alert a {color:#8a1f11;}
+.notice a {color:#514721;}
+.success a {color:#264409;}
+.info a {color:#205791;}
+
+
+div.error {
+	margin: 15px 0;
+}
+div.error ul li {
+	list-style-type: disc;
+	padding: 5px 0 5px 0px;
+	margin-left: 20px;
+}
+.comment {
+	font-size: 12px;
+	width: 400px;
+	min-width: 400px;
+	max-width: 400px;
+	height: 50px;
+}
+
+div#dishlist {
+	margin-left: 220px;
+	padding-top: 10px;
+}
+div#dishlist ul li {
+	list-style: disc;
+	padding-left: 5px;
+	padding-bottom: 5px;
+}
+
+small.success, small.error, small.notify {
+	padding: 2px;
+	font-size: 0.9em;
+}
+small.notify {
+	color: #888888;
+	font-style: italic;
+}
+
+#request {
+	padding: 20px;
+}
+input.datepicker {
+	width: 100px !important;
+}
+.item {
+	margin: 5px 0;
+}
+h3 {
+	color: #000;
+	font-size: 1.8em;
+	margin: 0 0 0.5em;
+	font-variant: small-caps;
+}
+
+#requests {
+	padding: 10px;
+}
+
+#requests table {
+	vertical-align: top;
+	border-collapse: collapse;
+	border: 1px solid #000;
+	width: 100%;
+}
+#requests th {
+	font-weight: bold;
+	background: #fff;
+
+}
+#requests th {
+	padding: 6px;
+	white-space: nowrap;
+}
+#requests td {
+	padding: 4px;
+	border: 1px solid #000;
+	text-align: left;
+}
+#requests tr.even td {
+	background: #F3F3F3;
+}
+#requests tr.odd td {
+	background: #DEDEDF;
+}
+#requests td.actions {
+	white-space: nowrap;
+}

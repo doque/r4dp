@@ -1,0 +1,2 @@
+something();
+//{ an: "object"} ;
