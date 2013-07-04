@@ -51,7 +51,7 @@ div.options label {
 	margin-right: 5px !important;
 }
 
-div.datepicker {
+div.datepicker, div.timepicker {
 	font-size: 0.9em;
 }
 
@@ -208,6 +208,9 @@ small.notify {
 input.datepicker {
 	width: 100px !important;
 }
+ input.timepicker {
+ 	width: 60px !important;	
+ }
 .item {
 	margin: 5px 0;
 }

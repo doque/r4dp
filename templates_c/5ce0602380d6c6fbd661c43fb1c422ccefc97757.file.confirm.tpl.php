@@ -1,40 +1,40 @@
-<?php /* Smarty version Smarty-3.1.7, created on 2013-07-02 19:00:46
+<?php /* Smarty version Smarty-3.1.7, created on 2013-07-04 20:16:52
          compiled from "templates\confirm.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:300751d3073e3d7098-80454928%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:2979651d5bc146e1c15-84695252%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '5ce0602380d6c6fbd661c43fb1c422ccefc97757' => 
     array (
       0 => 'templates\\confirm.tpl',
-      1 => 1372783680,
+      1 => 1372785156,
       2 => 'file',
     ),
     '86c1854c7ae34b9409258038b632df35d264d682' => 
     array (
       0 => 'templates\\html.tpl',
-      1 => 1330032626,
+      1 => 1372961044,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '300751d3073e3d7098-80454928',
+  'nocache_hash' => '2979651d5bc146e1c15-84695252',
   'function' => 
   array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.7',
-  'unifunc' => 'content_51d3073e4ab0e',
+  'unifunc' => 'content_51d5bc148027b',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_51d3073e4ab0e')) {function content_51d3073e4ab0e($_smarty_tpl) {?><!DOCTYPE html>
+<?php if ($_valid && !is_callable('content_51d5bc148027b')) {function content_51d5bc148027b($_smarty_tpl) {?><!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 	<title>
 Confirm Your Request
 </title>
-	<link rel="stylesheet" href="assets/css/pepper-grinder/jquery-ui-1.8.18.custom.css"/>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	<script src="assets/js/jquery-ui-1.8.17.custom.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<script src="assets/js/jquery.timepicker.js"></script>
 	<script type="text/javascript">
         
         
@@ -42,6 +42,8 @@ Confirm Your Request
 
 	</script>
 	<link rel="stylesheet" href="assets/css/reset.css"/>
+	<link rel="stylesheet" href="assets/css/pepper-grinder/jquery-ui-1.8.18.custom.css"/>
+	<link rel="stylesheet" href="assets/css/jquery.timepicker.css"/>
 	<link rel="stylesheet" href="assets/css/style.css"/>
 
 	
@@ -92,8 +94,8 @@ $_smarty_tpl->tpl_vars['item']->_loop = true;
 ?>
 						<div class="options">
 							<input type="text" style="width: 20px;" readonly value="<?php echo $_smarty_tpl->tpl_vars['item']->value['amount'];?>
-"/> <?php echo $_smarty_tpl->tpl_vars['item']->value['name'];?>
-
+  <?php echo $_smarty_tpl->tpl_vars['item']->value['name'];?>
+"/>
 						</div>
 					<?php } ?>
 				</div>
