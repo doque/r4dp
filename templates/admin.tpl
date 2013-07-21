@@ -60,16 +60,11 @@ $(function() {
 				
 				<label for="requestStatus">Request Status:</label>
 				<div id="requestStatus" class="requestStatus">
-					<input type="checkbox" name="approved" id="approved" value="true"/>
-					<label for="approved">Approved</label>
-					<input type="checkbox" name="late" id="late" value="true"/>
-					<label for="late">Late</label>
-					<input type="checkbox" name="returned" id="returned" value="true"/>
-					<label for="returned">Returned</label>
-					<input type="checkbox" name="paid" id="paid" value="true"/>
-					<label for="paid">Paid</label>
-					<input type="checkbox" name="cancelled" id="cancelled" value="true"/>
-					<label for="cancelled">Cancelled</label>
+					<input type="radio" name="status" id="approved" value="approved"/>
+					<label for="approved">Waiting</label>
+					<input type="radio" name="status" id="waiting" value="waiting"/>
+					<label for="late">Rejected</label>
+					<input type="radio" name="status" id="rejected" value="rejected"/>
 				</div>
 			</fieldset>
 			
@@ -112,7 +107,7 @@ $(function() {
 			<table>
 				<thead>
 					<tr>
-						<th>Request ID</th>
+						<th>Reference Number</th>
 						<th>Student Information</th>
 						<th>Dates</th>
 						<th>Requested Items</th>
@@ -123,13 +118,15 @@ $(function() {
 					{foreach $requests as $request}
 						{assign var="class" value={cycle values="even, odd"}}
 						<tr id="request-{$request.requestid}" class="{$class}">
-							<td class="request-quickid">{$request.quickID}</td>
+							<td class="request-quickid">
+								{$request.quickid}
+							</td>
 							<td class="request-userinformation">
 								<div>{$request.name}</div>
 								<div>{$request.email}</div>
-								<div>{$request.studentId}</div>
+								<div>{$request.concordiaid	}</div>
 							</td>
-							<td class="request-dates">{$request.date_from|date_format:"%d.%m.%Y"} until {$request.date_until|date_format:"%d.%m.%Y"}</td>
+							<td class="request-dates">{$request.date_from|date_format:"%d.%m.%Y %H:%M:%S"} until {$request.date_until|date_format:"%d.%m.%Y %H:%M:%S"}</td>
 							<td class="request-items">
 								{foreach $request.items as $dish}
 									<div>{$dish.amount} {$dish.name}</div>

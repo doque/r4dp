@@ -16,6 +16,7 @@ local.properties
 .settings/
 .loadpath
 .dropbox
+templates_c/
 
 # External tool builders
 .externalToolBuilders/

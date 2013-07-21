@@ -9,18 +9,14 @@ $requests = array();
 
 // search for requests matching criteria
 if (!empty($_POST['search'])) {
-
-	foreach (array('approved', 'late', 'returned', 'paid', 'cancelled') AS $status) {
-		if (!empty($_POST[$status])) {
-			$filters[] = '`'.$status.'` = 1';
-		}
-	}
 	
+	$filters = "";
 	
 	// get requests
 	$db->query('SELECT *, `r`.`id` AS `requestid` FROM `requests` AS `r`
 					LEFT JOIN `users` AS `u` ON `u`.`id` = `r`.`userid`
-					WHERE %s', implode(' AND ', $filters));
+					WHERE %s', $filters);
+	
 	while ($row = $db->fetchAssoc()) {
 		$requests[$row['requestid']] = $row;
 	}
@@ -43,7 +39,7 @@ if (!empty($_POST['search'])) {
 	// get requests
 	$db->query('SELECT *, `r`.`id` AS `requestid` FROM `requests` AS `r`
 					LEFT JOIN `users` AS `u` ON `u`.`id` = `r`.`userid`
-					INNER JOIN `requestItems` AS `ri` ON `ri`.`requestid` = `r`.`id`
+					INNER JOIN `requestitems` AS `ri` ON `ri`.`requestid` = `r`.`id`
 					WHERE %s', implode(' AND ', $filters));
 	while ($row = $db->fetchAssoc()) {
 		$requests[$row['requestid']] = $row;
@@ -53,12 +49,10 @@ if (!empty($_POST['search'])) {
 }
 
 // default filter is non-approved
-else  {
-	$filters[] = '`approved` = 0';
-	
+else  {	
 	$db->query('SELECT *, `r`.`id` AS `requestid` FROM `requests` AS `r`
 					LEFT JOIN `users` AS `u` ON `u`.`id` = `r`.`userid`
-					WHERE %s', implode(' AND ', $filters));
+					WHERE `status` = "waiting"');
 	while ($row = $db->fetchAssoc()) {
 		$requests[$row['requestid']] = $row;
 	}
@@ -71,9 +65,9 @@ else  {
 foreach ($requests as $key=>$value) {
 
 	// query items belonging to this request
-	$db->query('SELECT `i`.*, `ri`.`amount`, `ri`.`amount_returned`, `ri`.`amount_dirty`
+	$db->query('SELECT `i`.*, `ri`.`amount`
 				FROM `requests` AS `r`
-				INNER JOIN `requestItems` AS `ri` ON `ri`.`requestid` = `r`.`id`
+				INNER JOIN `requestitems` AS `ri` ON `ri`.`requestid` = `r`.`id`
 				INNER JOIN `items` AS `i` ON `i`.`id` = `ri`.`itemid`');
 	while($row = $db->fetchAssoc()) {
 		#echo "<pre>".print_r($row,1)."</pre>";

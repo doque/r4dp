@@ -1,5 +1,4 @@
-Hello {$name},
+Dear Customer,
 
-your request for the Free Dish Project has been submitted and is currently awaiting approval.
-
-Your request ID is {$quickId}. If you have any questions, you can call XX at YY or write an email to ZZ.
+Thank you for your order {$quickId}. A Dish Project coordinator will review and confirm your request within three (3) business days.
+If you have any questions, please contact us at r4dishproject@gmail.com and specify your order number.

@@ -33,7 +33,6 @@ body {
 	float: left;
 	font-size: 1em;
 	margin-right: 15px;
-	padding-top: 7px;
 	text-align: right;
 	width: 190px;
 }
@@ -92,9 +91,6 @@ select, input, textarea {
 	padding-top: 4px;
 	padding: 5px;
 	border: 1px solid #BBBBBB;
-	margin: 5px 0;
-}
-label {
 	margin: 5px 0;
 }
 
@@ -253,4 +249,30 @@ h3 {
 }
 #requests td.actions {
 	white-space: nowrap;
+}
+.information label {
+	padding-top: 7px;
+	margin-top: 7px;
+}
+.options div {
+	padding-top: 15px;
+}
+.options ul {
+	margin-top: 10px;
+	margin-left: 15px;
+}
+.options ul li {
+	padding: 5px 0;
+	list-style: disc;
+}
+td {
+	vertical-align: middle;
+}
+td.request-quickid {
+	font-size: 20px;
+	font-weight: bold;
+	text-align: center !important;
+}
+input.selectedamounts {
+	width: 50px !important;
 }

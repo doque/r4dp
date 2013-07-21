@@ -18,6 +18,8 @@ class eMail {
 			$rec = array($rec);
 		}
 		$this->to = array_merge($this->to, $rec);
+		return $this;
+		
 	}
 
 	public function send() {
@@ -42,14 +44,19 @@ class eMail {
 
 	public function setMessage($msg) {
 		$this->message = str_replace(array("\r\n", "\n\r"), "\n", $msg);
+		return $this;
 	}
 
 	public function setSender($from) {
 		$this->from = $from;
+		return $this;
+		
 	}
 
 	public function setSubject($subj) {
 		$this->subject = $subj;
+		return $this;
+		
 	}
 }
 

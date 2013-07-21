@@ -14,6 +14,7 @@
 	<link rel="stylesheet" href="assets/css/pepper-grinder/jquery-ui-1.8.18.custom.css"/>
 	<link rel="stylesheet" href="assets/css/jquery.timepicker.css"/>
 	<link rel="stylesheet" href="assets/css/style.css"/>
+	<link rel="stylesheet" href="assets/css/tooltip.css"/>
 
 	{block name=header}{/block}
 </head>

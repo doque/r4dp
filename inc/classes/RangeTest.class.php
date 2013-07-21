@@ -62,7 +62,7 @@ class RangeTest {
     public function getRequestsInRange($item, $start, $end) {
         $addWhere = '';
         if(!$this->ignoreApproved) {
-            $addWhere .= 'AND `approved` = 1';
+            $addWhere .= 'AND `status` = "approved"';
         }
         
         $stmt = $this->db->prepare('

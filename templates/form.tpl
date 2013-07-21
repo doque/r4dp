@@ -8,8 +8,6 @@ Submit new Request
 {literal}
 	$(function() {
 	
-		$('.tooltip').tooltip();
-	
 		$('.datepicker').datepicker({
 			//dateFormat: "d.m.Y",
 			beforeShowDay: function(date) {
@@ -24,24 +22,43 @@ Submit new Request
 			step: 15 // 15 minute increments
 		});
         
-        $('.selectitems option').click(function() {
-        	// selectable amounts for this items
-        	var amounts = $.parseJSON($(this).attr('data-amounts'));
-        	console.log(amounts);
-        	var availables = $(this).parent().prev().children().each(function() {
-        		if (amounts.indexOf(parseInt(this.value)) == -1) {
-        			$(this).hide();
-        		} else {
-        			$(this).show();
-        		}
-        	});
-        	
-        });
-        
+		$('.more').live('click', function() {
+			var factor = parseInt($(':selected', $(this).parent()).attr('data-factor'));
+			var available = parseInt($(':selected', $(this).parent()).attr('data-available'))
+			if (factor) { // shouldnt be empty except if a non-item is selected
+				var amounts = parseInt( ($(this).prev().val() || 0) );
+				amounts += factor;
+				if (amounts > available) {
+					return false;
+				}
+				$(this).prev().val(amounts);
+			}
+		});
+		
+		 
+		$('.less').live('click', function() {
+			var factor = parseInt($(':selected', $(this).parent()).attr('data-factor'));
+			if (factor) { // shouldnt be empty except if a non-item is selected
+				var amounts = parseInt( ($(this).prev().prev().val() || 0) );
+				amounts -= factor;
+				if (amounts < 0) {
+					return false;
+				}
+				$(this).prev().prev().val(amounts);
+			}
+		});
+		
+		
+		$('.selectitems').live('change', function() {
+			$(this).next().val($(':selected', this).attr('data-factor'));
+		});
+       
 		var items = 1;
         $('a#more_items').click(function(e) {
             e.preventDefault();
-			var n = $('#option_preset').clone().addClass('more').attr('id', 'option_preset'+(items++)).appendTo('.items').find("small").remove();
+            var n = $('#options_preset').clone(true).addClass('more').attr('id', 'options_preset'+(items++)).appendTo('.items');
+            n.find("small").remove();
+            n.find(".selectedamounts").val("");
             n.find('option:selected').removeAttr('selected');
 			
         });
@@ -71,14 +88,14 @@ Submit new Request
 				
 
 				{if $errors}
-				<div class="error">
-
-					{foreach $errors AS $k=>$v}
-					<ul>
-						<li>{$errors[$k]}</li>
-					</ul>
-					{/foreach}
-				</div>
+					<div class="error">
+	
+						{foreach $errors AS $k=>$v}
+							<ul>
+								<li>{$errors[$k]}</li>
+							</ul>
+						{/foreach}
+					</div>
 				{/if}
 			
 				<label for="user_name">Full Name: *</label>
@@ -97,8 +114,8 @@ Submit new Request
 				<input type="text" id="user_department" name="user_department" value="{$smarty.post.user_department|escape}" {if $errors.user_department}class="error"{/if}/>
 				
 				<label for="user_concordiaid">Your Concordia ID:</label>
-				<input type="text" class="tooltip" title="A valid Concordia alumni, staff or student ID must be presented at pick-up.
-				An off-campus fee applies otherwise. Non-Concordia community members must show a government-issued ID." id="user_concordiaid" name="user_concordiaid" value="{$smarty.post.user_concordiaid|escape}" {if $errors.user_concordiaid}class="error"{/if}/>
+				<input type="text" class="tooltip" title="A valid Concordia alumni, staff or student ID must be presented at pick-up.<br/>
+				An off-campus fee applies otherwise.<br/>Non-Concordia community members must show a government-issued ID." id="user_concordiaid" name="user_concordiaid" value="{$smarty.post.user_concordiaid|escape}" {if $errors.user_concordiaid}class="error"{/if}/>
 				
 				<label for="user_comment">Comment:</label>
 				<textarea class="comment text" id="user_comment" name="user_comment" {if $errors.user_comment}class="error"{/if}>{$smarty.post.user_comment|escape}</textarea>
@@ -137,51 +154,50 @@ Submit new Request
 				
 				<div class="items clearfix">
 					<label for="amount">Dishes to Reserve:</label>
-                    {foreach $selectedItems key=item item=amount}
-                        {* generate selects from submitted data (user has submitted the form) *}
-                        <div class="options {if $amount@iteration > 1}more{/if}" {if $amount@iteration == 1}id="option_preset"{/if}>
-                            {html_options name='item_amount[]' options=$amounts selected=$amount}
-                            {html_options name='item_id[]' options=$items selected=$item}
-                            {if !empty($itemsAvailable)} {* if this is empty, other fields are invalid (like date, which would render the available amount calculation useless) *}
-                                {if $itemsAvailable[$item] < $amount}
-                                    <small class="error">
-                                        {if $itemsAvailable[$item] == 0}
-											These are not available for the selected dates.
-                                        {else}
-                                            Only {$itemsAvailable[$item]} available.
-                                        {/if}
-                                    </small>
-                                {else}
-                                    <small class="success">These are available.</small>
-                                {/if}
-                            {/if}
-                        </div>
-                    {foreachelse}
-                        {* generate initial form to show to the user *}
-                        <div class="options" id="option_preset">
-                        	<select class="selectamounts" name="item_amounts[]">
-                        		{foreach $maxAvailable as $a}
-                        			<option value="{$a}">{$a}</option>
-                        		{/foreach}
-                        	</select>
-                        	<select class="selectitems" name="item_id[]">
+					{if !empty($selectedItems)}
+		                {foreach $selectedItems key=selectedItem item=selectedAmount}
+		                <div class="options more">
+		                	<select class="selectitems" name="item_id[]">
                         		<option value="">Please select a dish</option>
                         		<option value="">--</option>
-	                        	{foreach $items as $item name=items}
-	                        		<option value="{$item.id}" data-amounts="{$item.amounts|json_encode}">{$item.name|escape}</option>
+	                        	{foreach $items as $item}
+	                        		<option {if $item.id == $selectedItem}selected{/if} value="{$item.id}" data-available="{$item.available}" data-factor="{$item.factor}">{$item.name|escape}</option>
 	                        	{/foreach}
-                        	</select>
-                        </div>
-                    {/foreach}
-
+	                        </select>
+	                        <input readonly class="selectedamounts" name="item_amount[]" type="text" value="{$selectedAmount}"/>
+	                        <a class="more" href="javascript:void(0)">more</a> | <a class="less" href="javascript:void(0)">less</a>
+							{if $itemsAvailable[$selectedItem] < $selectedAmount}
+								<small class="error">
+							    {if $itemsAvailable[$selectedItem] == 0}
+									These are not available for the selected dates.
+							    {else}
+							    	Only {$itemsAvailable[$selectedItem]} available.
+							    {/if}
+							    </small>
+							{else}
+								<small class="success">These are available.</small>
+							{/if}
+						</div>
+						{/foreach}
+					
+					{/if}
+					<div class="options more" id="options_preset">
+						<select class="selectitems" name="item_id[]">
+                       		<option value="">Please select a dish</option>
+                       		<option value="">--</option>
+                        	{foreach $items as $item}
+                        		<option value="{$item.id} data-available="{$item.available}" data-factor="{$item.factor}">{$item.name|escape}</option>
+                        	{/foreach}
+                        </select>
+                        <input readonly class="selectedamounts" name="item_amount[]" type="text"/>
+                        <a class="more" href="javascript:void(0)">more</a> | <a class="less" href="javascript:void(0)">less</a>
+                    </div>
 				</div>
 					<a href="#" id="more_items">Reserve another item</a>
 			</fieldset>
 		</div>
 		
-
-			
-			<input type="submit" id="submit" value="Reserve Items &raquo;"/>
+		<input type="submit" id="submit" value="Reserve Items &raquo;"/>
 	</form>
 
 </div>
