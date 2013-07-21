@@ -3,14 +3,12 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 02, 2013 at 05:42 PM
+-- Generation Time: Jul 21, 2013 at 07:25 PM
 -- Server version: 5.5.16
 -- PHP Version: 5.3.8
 
 SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT=0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -84,12 +82,11 @@ INSERT INTO `items` (`id`, `name`, `description`, `available`, `factor`, `value`
 
 DROP TABLE IF EXISTS `requestitems`;
 CREATE TABLE IF NOT EXISTS `requestitems` (
-  `requestID` int(10) unsigned NOT NULL,
-  `itemID` int(10) unsigned NOT NULL,
+  `requestid` int(10) unsigned NOT NULL,
+  `itemid` int(10) unsigned NOT NULL,
   `amount` int(10) unsigned NOT NULL DEFAULT '0',
-  `amount_returned` int(10) unsigned NOT NULL DEFAULT '0',
-  `amount_dirty` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`requestID`,`itemID`)
+  `autoadded` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`requestid`,`itemid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -101,16 +98,25 @@ CREATE TABLE IF NOT EXISTS `requestitems` (
 DROP TABLE IF EXISTS `requests`;
 CREATE TABLE IF NOT EXISTS `requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `userID` int(11) NOT NULL,
+  `quickid` varchar(32) NOT NULL,
+  `confirmauth` varchar(32) NOT NULL,
+  `userid` int(11) NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `date_from` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_until` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_returned` timestamp NULL DEFAULT NULL,
-  `approved` tinyint(1) NOT NULL,
-  `comment` text,
+  `cleaning` enum('user','facility','dirty') NOT NULL,
+  `status` enum('approved','waiting','rejected') NOT NULL DEFAULT 'waiting',
   `pending` timestamp NULL DEFAULT NULL,
+  `late` tinyint(1) NOT NULL,
+  `returned` tinyint(1) NOT NULL,
+  `cancelled` tinyint(1) NOT NULL,
+  `paid` tinyint(1) NOT NULL,
+  `comment_user` text NOT NULL,
+  `comment_admin` text NOT NULL,
+  `deposit` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `userID` (`userID`)
+  KEY `userID` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -123,13 +129,15 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `concordia` tinyint(1) NOT NULL,
-  `email` int(11) NOT NULL,
-  `phone` int(11) NOT NULL,
-  `studentID` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(32) NOT NULL,
+  `concordiaid` int(11) NOT NULL,
+  `department` varchar(255) NOT NULL,
+  `address` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 SET FOREIGN_KEY_CHECKS=1;
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
