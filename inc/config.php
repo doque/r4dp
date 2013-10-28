@@ -2,9 +2,9 @@
 
 // database credentials
 define('DATABASE_HOST', 'localhost');
-define('DATABASE_USER', 'd0133e48');
+define('DATABASE_USER', 'hugyourm_dishes');
 define('DATABASE_PASS', 'AFNqVZWCbxzyp2AA');
-define('DATABASE_NAME', 'd0133e48');
+define('DATABASE_NAME', 'hugyourm_dishes');
 
 // application settings
 define('REQUEST_TIMEOUT_MINUTES', 15); // requests are invalidated after this time (prevent ppl from blocking items by starting the form but never finishing it)

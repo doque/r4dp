@@ -10,13 +10,35 @@ $requests = array();
 // search for requests matching criteria
 if (!empty($_POST['search'])) {
 	
-	$filters = "";
-	
 	// get requests
-	$db->query('SELECT *, `r`.`id` AS `requestid` FROM `requests` AS `r`
-					LEFT JOIN `users` AS `u` ON `u`.`id` = `r`.`userid`
-					WHERE %s', $filters);
+	$query = 'SELECT *, `r`.`id` AS `requestid` FROM `requests` AS `r`
+			  LEFT JOIN `users` AS `u` ON `u`.`id` = `r`.`userid`';
+	$filters = array();
+
+	if (!empty($_POST['quickid'])) {
+		$filters[] = '`r`.`quickid` = "'. mysql_real_escape_string($_POST['quickid']).'"';
+	}
+
+	if (!empty($_POST['user_name'])) {
+		$filters[] = '`u`.`name` LIKE "%%'.mysql_real_escape_string($_POST['user_name']).'%%"';
+	}
+
+	if (!empty($_POST['user_email'])) {
+		$filters[] = '`u`.`email` LIKE "%%'.mysql_real_escape_string($_POST['user_email']).'%%"';	
+	}
+
+	if (!empty($_POST['status'])) {
+		$filters[] = '`r`.`status` = "'.mysql_real_escape_string($_POST['status']).'"';
+	}
 	
+	if (count($filters) > 0) {
+		$query .= ' WHERE ' . implode(' AND ', $filters);
+	}
+
+#	print $query;
+
+	$db->query($query);
+
 	while ($row = $db->fetchAssoc()) {
 		$requests[$row['requestid']] = $row;
 	}
@@ -24,17 +46,28 @@ if (!empty($_POST['search'])) {
 	
 	
 // this is for looking up request per item id
-} else if (isset($_POST['lookup'])) {
+} else if (!empty($_POST['lookup'])) {
+
+	$filters = array(true);
+
 	if (!empty($_POST['date_from'])) {
-		$filters[] = mysql_real_escape_string($_POST['date_from']) . ' BETWEEN `date_from` AND `date_until`'; // TODO: remove mysql injection pretty
+
+#		var_dump(strtotime($_POST['date_from'] . ' 00:00:00'));
+#		exit;
+
+		$filters[] = '(FROM_UNIXTIME(' . strtotime($_POST['date_from']) . ') BETWEEN `date_from` AND `date_until`)';
 	}
 	if (!empty($_POST['date_until'])) {
-		$filters[] = mysql_real_escape_string($_POST['date_until']) . ' BETWEEN `date_from` AND `date_until`';
+		$filters[] = '(FROM_UNIXTIME(' . strtotime($_POST['date_until']) . ') BETWEEN `date_from` AND `date_until`)';
 	}
-	
+
+#	print_r($filters);
+
+	/*
 	if (!empty($_POST['item_id'])) {
 		$filters[] = '`ri`.`itemid` = '. (int) $_POST['item_id'];
 	}
+	*/
 	
 	// get requests
 	$db->query('SELECT *, `r`.`id` AS `requestid` FROM `requests` AS `r`
@@ -46,13 +79,11 @@ if (!empty($_POST['search'])) {
 	}
 	
 	
-}
-
-// default filter is non-approved
+} // default filter is non-approved
 else  {	
 	$db->query('SELECT *, `r`.`id` AS `requestid` FROM `requests` AS `r`
 					LEFT JOIN `users` AS `u` ON `u`.`id` = `r`.`userid`
-					WHERE `status` = "waiting"');
+					WHERE `status` = "received"');
 	while ($row = $db->fetchAssoc()) {
 		$requests[$row['requestid']] = $row;
 	}
@@ -60,18 +91,19 @@ else  {
 
 
 
+#echo '<pre>'.print_r($requests, 1),'</pre>';
 
 // get request items as a single array as field of each request
-foreach ($requests as $key=>$value) {
+foreach ($requests as $requestid=>$request) {
 
 	// query items belonging to this request
 	$db->query('SELECT `i`.*, `ri`.`amount`
 				FROM `requests` AS `r`
 				INNER JOIN `requestitems` AS `ri` ON `ri`.`requestid` = `r`.`id`
-				INNER JOIN `items` AS `i` ON `i`.`id` = `ri`.`itemid`');
+				INNER JOIN `items` AS `i` ON `i`.`id` = `ri`.`itemid` WHERE `r`.`id` = %d', $requestid);
 	while($row = $db->fetchAssoc()) {
 		#echo "<pre>".print_r($row,1)."</pre>";
-		$requests[$key]['items'][] = $row;
+		$requests[$requestid]['items'][] = $row;
 	}
 }
 

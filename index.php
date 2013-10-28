@@ -1,6 +1,7 @@
 <?php
 require_once 'global.php';
 
+
 if (isset($_POST['sent'])) {
 	
 	
@@ -9,7 +10,7 @@ if (isset($_POST['sent'])) {
 	$v->notEmpty('user_name', $_POST['user_name'], 'Please enter your name');
 	$v->notEmpty('user_address', $_POST['user_address'], 'Please enter your address');
 	
-	if (! $v->validateEmail($_POST['user_email'])) {
+	if (!$v->validateEmail($_POST['user_email'])) {
 		$v->triggerError('user_email', 'Please supply a valid email address');
 	}
 	
@@ -17,42 +18,37 @@ if (isset($_POST['sent'])) {
 	
 	$v->notEmpty('user_department', $_POST['user_department'], 'Please supply your Department/Organization');
 	
-// 	if (! $v->numeric('user_concordiaid', $_POST['user_concordiaid']) || strlen($_POST['user_concordiaid']) != 7) {
-// 		$v->triggerError('user_concordiaid', 'Your Concordia ID seems invalid');
-// 	}
+	if (!empty($_POST['user_concordiaid']) && (!$v->numeric('user_concordiaid', $_POST['user_concordiaid']) || strlen($_POST['user_concordiaid']) != 7)) {
+		$v->triggerError('user_concordiaid', 'Your Concordia ID seems invalid');
+	}
 	
-// 	if (false === ($from = strptime($_POST['date_from'] . " " . $_POST['time_from'], '%d/%m/%Y %H:%M'))) {
-// 		$v->triggerError('date_from', 'Please enter a start date for your reservation');
-// 	} else {
-// 		$date_from = mktime(0, 0, 0, $from['month'] + 1, $from['day'], $from['year'] + 1900);
-		
-		
-		
-// 		if ($date_from < (time() + 3600 * 24 * 6)) { // less than 6 days in future
-// 			$v->triggerError('date_from', 'Reservations have to be made at least 7 days prior to the reservation start');
-// 		}
-// 	}
-	
-// 	if (false === ($until = strptime($_POST['date_until'] . " " . $_POST['time_until'], '%d/%m/%Y %H:%M'))) {
-// 		$v->triggerError('date_until', 'Please enter an end date for your reservation');
-// 	} else {
-// 		$date_until = mktime(23, 59, 59, $until['tm_mon'] + 1, $until['tm_mday'], $until['tm_year'] + 1900);
-// 		if (! $v->hasError('date_from')) {
-// 			if ($date_until < $date_from) {
-// 				$v->triggerError('date_until', 'Reservation end date has to be later than start date');
-// 			}
-// 		}
-// 	}
-	
-	
-	$date_from = mktime(14, 30, 0, 7, 10, 2013);
-	$date_until = mktime(14, 30, 0, 7, 18, 2013);
+	if (false === ($date_from = strtotime($_POST['date_from'] . " " . $_POST['time_from']))) {
+		$v->triggerError('date_from', 'Please enter a start date and timefor your reservation');
+	} else {
+		if ($date_from < (time() + 3600 * 24 * 6)) { // less than 6 days in future
+			$v->triggerError('date_from', 'Reservations have to be made at least 7 days prior to the reservation start');
+		}
+	}
+
+
+
+	if (false === ($date_until = strtotime($_POST['date_until'] . " " . $_POST['time_until']))) {
+		$v->triggerError('date_until', 'Please enter an end date and time for your reservation');
+	} else {
+		if (! $v->hasError('date_from')) {
+			if ($date_until < $date_from) {
+				$v->triggerError('date_until', 'Reservation end date has to be later than start date');
+			}
+		}
+	}
 	
 	// cleaning
 	$v->notEmpty('cleaning', $_POST['cleaning'], 'Please select a cleaning choice');
 	
 	$selectedItems = array();
 	
+
+	// merge items for doubly selected 
 	foreach (array_keys($_POST['item_id']) as $i) {
 		$item = (int) $_POST['item_id'][$i];
 		$amount = (int) $_POST['item_amount'][$i];
@@ -65,7 +61,7 @@ if (isset($_POST['sent'])) {
 			$selectedItems[$item] = $amount;
 		}
 	}
-	print_r($selectedItems);
+	#print_r($selectedItems);
 	// validate that items are within range!
 	
 	
@@ -77,12 +73,14 @@ if (isset($_POST['sent'])) {
 	
 	if (! $v->hasError('date_from') && ! $v->hasError('date_until')) {
 		// delete timed out pending requests
-		$db->query('DELETE FROM `requests` WHERE `status` = "waiting" AND `pending` IS NOT NULL AND `pending` < NOW() - INTERVAL %d MINUTE', REQUEST_TIMEOUT_MINUTES);
+		$db->query('DELETE FROM `requests` WHERE `status` = "pending" AND `pending` IS NOT NULL AND `pending` < NOW() - INTERVAL %d MINUTE', REQUEST_TIMEOUT_MINUTES);
 		
 		$test = new RangeTest(new mysqli(DATABASE_HOST, DATABASE_USER, DATABASE_PASS, DATABASE_NAME));
 		$test->ignoreApproved = RESPECT_APPROVED_ON_AVI_CALC;
 		
 		$itemsAvailable = array();
+
+
 		foreach ($selectedItems as $item => $amount) {
 			$itemsAvailable[$item] = $test->availableInRange($item, $date_from, $date_until);
 			if ($itemsAvailable[$item] < $amount) {
@@ -92,12 +90,14 @@ if (isset($_POST['sent'])) {
 		$tpl->assign('itemsAvailable', $itemsAvailable);
 
 	}
-	print_r($itemsAvailable);
-	
+
+
+	#exit;
 	
 	if ($v->isValid()) {
-		$concordia = ('concordia.ca' === substr(trim($_POST['user_email']), - strlen('concordia.ca'))); // fixme, check for correct string
-		
+
+		// concordia user
+		$concordia = (strlen($_POST['user_concordiaid']) === 7 && $v->numeric($_POST['user_concordiaid']));
 		$user = $db->queryFirst('SELECT `id` FROM `users` WHERE `email` = "%s"', $_POST['user_email']);
 		if (empty($user)) {
 			$db->query('
@@ -137,7 +137,8 @@ if (isset($_POST['sent'])) {
 									   `date_from`  = FROM_UNIXTIME(%d),
 									   `date_until` = FROM_UNIXTIME(%d),
 									   `pending`    = NOW(),
-									   `comment_user` = "%s",
+									   `user_comment` = "%s",
+									   `status` = "unconfirmed",
 									   `cleaning` = "%s"
 		', $user['id'], $quickId, sha1(microtime(true) . HASH), $date_from, $date_until, trim($_POST['user_comment']), $_POST['cleaning']);
 		
@@ -190,26 +191,27 @@ if (isset($_POST['sent'])) {
 			}
 			
 			// add the actual item
-			$db->query('INSERT INTO `requestItems` SET `requestid` = %d,
+			$db->query('INSERT INTO `requestitems` SET `requestid` = %d,
 													   `itemid`    = %d,
 													   `amount`    = %d', $requestID, $item, $amount);
 		}
 		// insert additional items here
 		if ($amount_lg_boxes > 0) {
-			$db->query('INSERT INTO `requestItems` SET `autoadded` = 1,
+			$db->query('INSERT INTO `requestitems` SET `autoadded` = 1,
 													   `requestid` = %d,
 													   `itemid` = 26, -- LG Storage Box ID
 													   `amount` = %d', $requestID, $amount_lg_boxes);
-}
+		}
+		
 		if ($amount_wine_racks > 0) {
-			$db->query('INSERT INTO `requestItems` SET `autoadded` = 1,
+			$db->query('INSERT INTO `requestitems` SET `autoadded` = 1,
 													   `requestid` = %d,
 													   `itemid` = 28, -- Wine Glass Rack ID
 													   `amount` = %d', $requestID, $amount_wine_racks);
 		}
 		if ($amount_water_racks > 0) {
 		
-			$db->query('INSERT INTO `requestItems` SET `autoadded` = 1,
+			$db->query('INSERT INTO `requestitems` SET `autoadded` = 1,
 													   `requestid` = %d,
 													   `itemid` = 27, -- Water Glass Rack ID
 													   `amount` = %d', $requestID, $amount_water_racks);
@@ -218,7 +220,7 @@ if (isset($_POST['sent'])) {
 		// sets of 24 get one box
 		if ($amount_bowls > 0) {
 			$amount_sm_boxes = ceil($amount_bowls/24);
-			$db->query('INSERT INTO `requestItems` SET `autoadded` = 1,
+			$db->query('INSERT INTO `requestitems` SET `autoadded` = 1,
 													   `requestid` = %d,
 													   `itemid` = 25, -- SM Storage Box ID
 													   `amount` = %d', $requestID, $amount_sm_boxes);
@@ -226,7 +228,7 @@ if (isset($_POST['sent'])) {
 		// sets of 192 get one rack
 		if ($amount_cutlery > 0) {
 			$amount_cutlery_racks = ceil($amount_cutlery/192);
-			$db->query('INSERT INTO `requestItems` SET `autoadded` = 1,
+			$db->query('INSERT INTO `requestitems` SET `autoadded` = 1,
 													   `requestid` = %d,
 													   `itemid` = 29, -- Cutlery Rack ID
 													   `amount` = %d', $requestID, $amount_cutlery_racks);

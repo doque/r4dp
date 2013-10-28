@@ -31,6 +31,9 @@ class RangeTest {
 
         // get all requests in range and add up overlapping ones
         $requests = $this->getRequestsInRange($item, $start, $end);
+
+        #var_dump($requests);
+
         if(!count($requests)) return $amount;
         foreach($requests AS $i => $current) {
             foreach($requests AS $j => $compare) {
@@ -48,6 +51,7 @@ class RangeTest {
             }
         }
 
+
         return $amount - $requests[$max]['amount'];
     }
 
@@ -60,18 +64,19 @@ class RangeTest {
      * @return array all requests in that period as assoc array
      */
     public function getRequestsInRange($item, $start, $end) {
+
+
         $addWhere = '';
-        if(!$this->ignoreApproved) {
+        if($this->ignoreApproved === false) {
             $addWhere .= 'AND `status` = "approved"';
         }
         
         $stmt = $this->db->prepare('
             SELECT `id`, UNIX_TIMESTAMP(`date_from`), UNIX_TIMESTAMP(`date_until`), `amount`
             FROM `requests` AS `r`
-            INNER JOIN `requestItems` AS `ri` ON `ri`.`requestid` = `r`.`id` AND `ri`.`itemid` = ?
-            WHERE (1 ' . $addWhere . ') AND 
-                (
-                    (`date_from` BETWEEN ? AND ? OR `date_until` BETWEEN ? AND ?)
+            INNER JOIN `requestitems` AS `ri` ON `ri`.`requestid` = `r`.`id` AND `ri`.`itemid` = ?
+            WHERE (
+                (`date_from` BETWEEN ? AND ? OR `date_until` BETWEEN ? AND ?)
                     OR
                     (
                         (`date_from` <= ? AND `date_until` > ?)
@@ -84,9 +89,13 @@ class RangeTest {
 
         $s = $this->timeToString($start);
         $e = $this->timeToString($end);
+
+        
         $stmt->bind_param('issssssss', $item, $s, $e, $s, $e, $s, $s, $e, $e);
         $stmt->execute();
         $stmt->bind_result($id, $start, $end, $amount);
+
+
         $requests = array();
         while($stmt->fetch()) {
             $requests[] = array(

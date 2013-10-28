@@ -54,6 +54,8 @@ div.datepicker, div.timepicker {
 	font-size: 0.9em;
 }
 
+
+.hide { display: none;}
 div.options.more, #more_items {
 	margin-left: 205px; 
 }
@@ -137,16 +139,24 @@ input[type=checkbox] {
 }
 
 
-.error, .alert, .notice, .success, .info { border:1px solid #ddd; padding: 5px }
+.error, .alert, .notice, .success, .info, .status { border:1px solid #ddd; padding: 5px }
 .error, .alert {background:#fbe3e4 !important;color:#8a1f11 !important;border-color:#fbc2c4 !important;}
 .notice {background:#fff6bf;color:#514721;border-color:#ffd324;}
-.success {background:#e6efc2;color:#264409;border-color:#c6d880;}
+.success{background:#e6efc2;color:#264409;border-color:#c6d880;}
 .info {background:#d5edf8;color:#205791;border-color:#92cae4;}
 .error a, .alert a {color:#8a1f11;}
 .notice a {color:#514721;}
 .success a {color:#264409;}
 .info a {color:#205791;}
 
+
+.status-pending { background-color: #E0E000; border-color: ; }
+.status-received { background-color: #FF4A4A; border-color: ; }
+.status-approved { background-color: #DE4AFF; border-color: ; }
+.status-declined { background-color: #757575; border-color: ; }
+.status-delivered { background-color: #4AC5FF; border-color: ; }
+.status-returned { background-color: #91FF4A; border-color: ; }
+.status-followup { background-color: #FF9E4A; border-color: ; }
 
 div.error {
 	margin: 15px 0;
@@ -172,9 +182,6 @@ input[type=text].smalltext { width: 22px; }
 }
 .dishamounts + .dishamounts {
 	border-top: 1px solid #bbb;
-}
-.dishamounts-returns {
-	float: right;
 }
 
 div#dishlist {

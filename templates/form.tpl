@@ -9,7 +9,7 @@ Submit new Request
 	$(function() {
 	
 		$('.datepicker').datepicker({
-			//dateFormat: "d.m.Y",
+			dateFormat: "dd.mm.yy",
 			beforeShowDay: function(date) {
 				 return [(date.getDay() != 6 && date.getDay() != 0), ""]
 			}, // only allow weekdays
@@ -113,9 +113,8 @@ Submit new Request
 				<label for="user_department">Department/Organization: *</label>
 				<input type="text" id="user_department" name="user_department" value="{$smarty.post.user_department|escape}" {if $errors.user_department}class="error"{/if}/>
 				
-				<label for="user_concordiaid">Your Concordia ID:</label>
-				<input type="text" class="tooltip" title="A valid Concordia alumni, staff or student ID must be presented at pick-up.<br/>
-				An off-campus fee applies otherwise.<br/>Non-Concordia community members must show a government-issued ID." id="user_concordiaid" name="user_concordiaid" value="{$smarty.post.user_concordiaid|escape}" {if $errors.user_concordiaid}class="error"{/if}/>
+				<label for="user_concordiaid">Your <a href="#" title="A valid Concordia alumni, staff or student ID must be presented at pick-up. An off-campus fee applies otherwise. Non-Concordia community members must show a government-issued ID.">Concordia ID</a>:</label>
+				<input type="text"  id="user_concordiaid" name="user_concordiaid" value="{$smarty.post.user_concordiaid|escape}" {if $errors.user_concordiaid}class="error"{/if}/>
 				
 				<label for="user_comment">Comment:</label>
 				<textarea class="comment text" id="user_comment" name="user_comment" {if $errors.user_comment}class="error"{/if}>{$smarty.post.user_comment|escape}</textarea>
@@ -161,7 +160,7 @@ Submit new Request
                         		<option value="">Please select a dish</option>
                         		<option value="">--</option>
 	                        	{foreach $items as $item}
-	                        		<option {if $item.id == $selectedItem}selected{/if} value="{$item.id}" data-available="{$item.available}" data-factor="{$item.factor}">{$item.name|escape}</option>
+	                        		<option value="{$item.id}" data-available="{$item.available}" data-factor="{$item.factor}"{if $item.id == $selectedItem}selected{/if}>{$item.name|escape}</option>
 	                        	{/foreach}
 	                        </select>
 	                        <input readonly class="selectedamounts" name="item_amount[]" type="text" value="{$selectedAmount}"/>
@@ -186,7 +185,7 @@ Submit new Request
                        		<option value="">Please select a dish</option>
                        		<option value="">--</option>
                         	{foreach $items as $item}
-                        		<option value="{$item.id} data-available="{$item.available}" data-factor="{$item.factor}">{$item.name|escape}</option>
+                        		<option value="{$item.id}" data-available="{$item.available}" data-factor="{$item.factor}">{$item.name|escape}</option>
                         	{/foreach}
                         </select>
                         <input readonly class="selectedamounts" name="item_amount[]" type="text"/>

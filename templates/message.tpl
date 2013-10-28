@@ -9,7 +9,7 @@
 
 
 <div id="header">
-	<img id="logo" src="assets/img/departmentlogo.gif"/>
+	<a href="/admin.php" title="Admin Overview"><img id="logo" src="assets/img/departmentlogo.gif"/></a>
 </div>
 
 <div id="request">

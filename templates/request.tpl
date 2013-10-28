@@ -22,13 +22,13 @@ Manage Request
 
 
 <div id="header">
-	<img id="logo" src="assets/img/departmentlogo.gif"/>
+	<a href="/admin.php" title="Admin Overview"><img id="logo" src="assets/img/departmentlogo.gif"/></a>
 </div>
 
 <div id="request" class="search">
 
 	{if $success}
-		<div class="success">{$success|escape}</div>
+		<div class="success">Request was updated.</div>
 		<br/>
 		<br/>
 	{/if}
@@ -42,7 +42,7 @@ Manage Request
 	<form enctype="application/x-www-form-urlencoded" method="post" action="">
 
 		<input type="hidden" name="sent" value="true"/>
-
+		<input type="hidden" name="id" value="{$request.id}"/>
 
 		<div id="userInformation" class="information">
 			<fieldset>
@@ -91,18 +91,10 @@ Manage Request
 							<strong>{$dish.name}:</strong><br/>
 							
 							<label for="item[{$dish.id}][borrowed]">borrowed:</label>
-							<input type="text" readonly="true" class="smalltext" id="item[{$dish.id}][borrowed]" name="item[{$dish.id}][borrowed]" value="{$dish.amount}"/>
+							<input type="text" class="smalltext" id="item[{$dish.id}][borrowed]" name="item[{$dish.id}][borrowed]" value="{$dish.amount}"/>
 
-							<div class="dishamounts-returns">
-								<label for="item[{$dish.id}][amount_returned]">returned:</label>
-								<input type="text"  class="smalltext" id="item[{$dish.id}][amount_returned]" name="item[{$dish.id}][amount_returned]" value="{$dish.amount_returned}"/>
-								
-								<label for="item[{$dish.id}][amount_dirty]">returned dirty:</label>
-								<input type="text"  class="smalltext" id="item[{$dish.id}][amount_dirty]" name="item[{$dish.id}][amount_dirty]" value="{$dish.amount_dirty}"/>
-								
-								<label for="item[{$dish.id}][amount_broken]">returned broken:</label>
-								<input type="text" class="smalltext" id="item[{$dish.id}][amount_broken]" name="item[{$dish.id}][amount_broken]" value="{$dish.amount_broken}"/>
-							</div>
+							<label for="item[{$dish.id}][amount_returned]">returned:</label>
+							<input type="text"  class="smalltext" id="item[{$dish.id}][amount_returned]" name="item[{$dish.id}][amount_returned]" value="{$dish.amount_returned}"/>
 						</div>
 						
 					{/foreach}
@@ -116,44 +108,41 @@ Manage Request
 				<h3>Administration</h3>
 			
 				<label for="admin_comment"><b>Comment:</b></label>
-				<textarea name="admin_comment" class="comment">{$request.comment_admin|escape}</textarea>
+				<textarea name="admin_comment" class="comment">{$request.admin_comment|escape}</textarea>
 			
 				<br/>
+
+				<label for="admin_deposit_text"><b>Deposit Calculation:</b></label>
+				<div id="dishlist" class="options">
+					<ul id="deposit_information" class="paddedList">
+						{$request.deposit_text}
+					</ul>
+				</div>
 			
+				<br/>
+				<br/>
+
 				<label for="admin_status">Edit Request Status:</label>
 						
 				<div class="request-status">
 					<div>
-						<input type="checkbox" name="approved" {if $request.approved}checked="true"{/if} id="approved" value="true"/>
-						<label for="approved">Approved</label>
-						<small class="notify">User will be notified</small>
-					</div>
-										
-					<div>
-						<input type="checkbox" name="late" {if $request.late}checked="true"{/if} id="late" value="true"/>
-						<label for="late">Late</label>
-					</div>
-					
-					<div>
-						<input type="checkbox" name="returned" {if $request.returned}checked="true"{/if} id="returned" value="true"/>
-						<label for="returned">Returned</label>
-					</div>
-					
-					<div>
-						<input type="checkbox" name="paid" {if $request.paid}checked="true"{/if} id="paid" value="true"/>
-						<label for="paid">Paid</label>
-					</div>
-					
-					<div>
-						<input type="checkbox" name="cancelled" {if $request.cancelled}checked="true"{/if} id="cancelled" value="true"/>
-						<label for="cancelled">Cancelled</label>
+						<select name="status" onchange="if($(this).val() == 'approved' || $(this).val() == 'declined') $('.notify').show(); else $('.notify').hide();">
+							<option {if $request.status == "pending"}selected{/if} value="pending">Pending</option>
+							<option {if $request.status == "received"}selected{/if} value="received">Received</option>
+							<option {if $request.status == "approved"}selected{/if} value="approved">Approved</option>
+							<option {if $request.status == "declined"}selected{/if} value="declined">Declined</option>
+							<option {if $request.status == "delivered"}selected{/if}  value="delivered">Delivered</option>
+							<option {if $request.status == "returned"}selected{/if}  value="returned">Returned</option>
+							<option {if $request.status == "followup"}selected{/if}  value="followup">Follow-Up</option>
+						</select>
+						<small class="notify hide">User will be notified</small>
 					</div>
 				</div>
 			</fieldset>
 		
 		</div>
 
-		<input type="submit" id="update" name="update" value="Update Request &raquo;"/> <input type="submit" id="delete" name="delete" value="Delete Request &raquo;"/>
+		<input type="submit" id="update" name="update" value="Update Request &raquo;"/> <input type="submit" id="delete" style="float: right;" name="delete" value="Delete Request &raquo;"/>
 	</form>
 
 

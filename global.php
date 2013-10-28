@@ -9,15 +9,12 @@ require_once 'inc/classes/MySQL.class.php';
 // template engine
 require_once 'inc/classes/Smarty-3.1.7/libs/Smarty.class.php';
 
-// functions
-require_once 'inc/func/strptime.func.php'; // for windows
-
 require_once 'inc/func/bug.func.php';
 
 
 require_once 'inc/classes/RangeTest.class.php';
 require_once 'inc/classes/RequestValidator.class.php';
-require_once 'inc/classes/eMail.class.php';
+require_once 'inc/classes/EMail.class.php';
 // set up connection
 $db = new MySQL(DATABASE_HOST, DATABASE_USER, DATABASE_PASS, DATABASE_NAME);
 // set up template engine

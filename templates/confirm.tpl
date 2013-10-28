@@ -18,8 +18,6 @@ Confirm Your Request
 
 
 
-	
-
 <div id="request">
 	{if $errors}
 		<div class="error">
@@ -111,18 +109,21 @@ Confirm Your Request
 				<label for="deposit">Savings:</label>
 				<div class="options more">
 					<div>
-						<u>By using Sustainable Concordia's Dish Service, you saved:</u>
+						<a href="http://sustainable.concordia.ca/get-involved/make-a-donation" target="_blank">Your donations</a> help us to provide this service.
+						<br/>
+						<br/>
+						<u>By choosing reusable, you have saved:</u>
 						<br/><br/>
 						<strong style="font-size: 20px;">${$savings}</strong>
 					</div>
 				</div>
 
-				<label for="comment_user">Comments:</label>
+				<label for="user_comment">Comments:</label>
 				<div class="options more">
 					<div>
 						<p>Do you have any additional comments?</p>
 						
-						<textarea name="comment_user" rows="5" cols="50">{$smarty.post.comment_user|escape}</textarea>
+						<textarea name="user_comment" rows="5" cols="50">{$smarty.post.user_comment|escape}</textarea>
 					</div>
 				</div>
 
@@ -136,7 +137,7 @@ Confirm Your Request
 						
 						<div>
 							<input type="checkbox" id="toc" name="toc" value="true" {if isset($smarty.post.toc)}checked{/if}/>
-							<label for="toc">I accept the <a href="#">terms &amp; conditions.</a></label>
+							<label for="toc">I accept the <a href="/terms.php" target="_blank">terms &amp; conditions.</a></label>
 						</div>
 				
 				

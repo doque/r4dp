@@ -44,13 +44,12 @@ $(function() {
 				<div id="status" class="requestStatus">
 					<select name="status">
 						<option value="">Any</option>
-						<option {if $smarty.post.status == "pending"}selected{/if} value="pending">Pending</option>
-						<option {if $smarty.post.status == "received"}selected{/if} value="received">Received</option>
-						<option {if $smarty.post.status == "approved"}selected{/if} value="approved">Approved</option>
-						<option {if $smarty.post.status == "declined"}selected{/if} value="declined">Declined</option>
-						<option {if $smarty.post.status == "delivered"}selected{/if}  value="delivered">Delivered</option>
+						<option {if $smarty.post.status == "unconfirmed"}selected{/if} value="unconfirmed">Unconfirmed</option>
+						<option {if $smarty.post.status == "waiting"}selected{/if} value="waiting">Waiting</option>
+						<option {if $smarty.post.status == "confirmed"}selected{/if} value="confirmed">Confirmed</option>
+						<option {if $smarty.post.status == "delivered"}selected{/if} value="delivered">Delivered</option>
 						<option {if $smarty.post.status == "returned"}selected{/if}  value="returned">Returned</option>
-						<option {if $smarty.post.status == "followup"}selected{/if}  value="followup">Follow-Up</option>
+						<option {if $smarty.post.status == "pending"}selected{/if}  value="pending">Pending</option>
 					</select>
 				</div>
 			</fieldset>

@@ -27,6 +27,9 @@ if (empty($request)) {
 $user = $db->queryFirst('SELECT u.* FROM `requests` r RIGHT JOIN users u ON u.id = r.userid WHERE r.id = %d', $requestID);
 
 
+print_r($request);
+#exit;
+
 if (isset($_POST['sent'])) {
 	
 	$v = new RequestValidator();
@@ -37,10 +40,25 @@ if (isset($_POST['sent'])) {
 	// set request to status awaiting_approval
 	if ($v->isValid()) {
 		// change request status and insert user comment
-		$db->query('UPDATE `requests` SET `status` = "waiting", `comment_user` = "%s" WHERE `id` = %d', $requestID, $_POST['comment_user']);
+		$db->query('UPDATE `requests` SET `status` = "received", `user_comment` = "%s" WHERE `id` = %d', trim($_POST['user_comment']), $requestID);
 		// send emails
+
+
 		$tpl->assign('quickId', $request['quickid']);
+
+
+		$email = new EMail();
+		$email->setSubject('Your request for dishes was placed!');
+		$email->addRecipients(array($user['email'], 'r4dishproject@gmail.com', 'r4dp.adm@gmail.com'));
+		$email->setMessage($tpl->fetch('email/pending.tpl'));
+		
+		$email->send();
+		
+
+
 		$tpl->display('confirmed.tpl');
+		
+		
 		exit;
 		
 	} else {
@@ -52,7 +70,7 @@ if (isset($_POST['sent'])) {
 // query items belonging to this request
 $db->query('SELECT *
             FROM `requests` AS `r`
-            INNER JOIN `requestItems` AS `ri` ON `ri`.`requestid` = `r`.`id`
+            INNER JOIN `requestitems` AS `ri` ON `ri`.`requestid` = `r`.`id`
             INNER JOIN `items` AS `i` ON `i`.`id` = `ri`.`itemid`
             WHERE `r`.`id` = %d', $requestID);
 
@@ -143,8 +161,10 @@ $valueItems[] = 'rounding your total deposit of $' . number_format($deposit, 2) 
 
 // show confirmed.tpl with information about depost (an email has been sent to ...)
 
-// save deposit to db
-$db->query('UPDATE `requests` SET `deposit` = %d', $deposit_rounded);
+// save deposit to db, alongisde text
+$db->query('UPDATE `requests` SET `deposit` = %d, `deposit_text` = "%s"', $deposit_rounded, "<li>" . implode($valueItems, "</li><li>") . "</li>");
+
+if (empty($_POST['user_comment'])) $_POST['user_comment'] = $request['user_comment'];
 
 $tpl->assign('user', $user);
 $tpl->assign('request', $request);
